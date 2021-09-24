@@ -5,7 +5,8 @@
   "description": "Entrega de Joaquin Decima",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "entorno-express": "node entorno/expressEntorno.js"
   },
   "author": "Joaquin (Pato)",
   "license": "GPL-3.0-or-later",
