@@ -1,0 +1,15 @@
+{
+  "name": "filewriter",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Entrega de Joaquin Decima",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joaquin (Pato)",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "fs": "^0.0.1-security"
+  }
+}
