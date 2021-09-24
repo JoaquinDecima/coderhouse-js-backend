@@ -14,11 +14,11 @@ export default class FileManager{
     }
   }
 
-  async writeData(data){
-    await fs.writeFile(this.path, data, 'utf8');
+  writeData(data){
+    fs.writeFileSync(this.path, data, 'utf8');
   }
 
-  async readData(){
-    return (await fs.readFile(this.path));
+  readData(){
+    return fs.readFileSync(this.path);
   }
 }
