@@ -1,4 +1,4 @@
-import Contenedor from '../contenedor.js'
+import Contenedor from '../src/filemanager/contenedor.js'
 
 // Funciones auxiliares
 
