@@ -1,78 +1,26 @@
-import Contenedor from './contenedor.js'
+import express from 'express';
+import Contenedor from './src/filemanager/contenedor.js'
+import startEntorno from './entorno/expressEntorno.js'
 
-// Funciones auxiliares 
+// SetUp del entorno
+const app = express();
+const port = process.env.PORT || 8080
+const cont = new Contenedor('./productos.txt');
 
-function getProduct(nombre, precio, imagen) {
-  return({
-    title : nombre,
-    price : precio,
-    thumbnail: imagen
-  })
-}
-const print = console.log
+startEntorno(cont);
 
-// Se prepara entorno
+// Se configura API
 
-const producto = getProduct('Escuadra', 123.45, 'https://patojad.com.ar/nof.svg');
-const producto2 = getProduct('Calculadora', 234.56, 'https://serscout.com.ar/nof.svg');
-const producto3 = getProduct('Globo Terraqueo', 345.67, 'https://lynx.net.ar/nof.svg');
+app.get('/productos', function(req, res, next){
+  res.send(cont.getAll());
+});
 
-const micont = new Contenedor('./productos.txt');
+app.get('/productoRandom', function(req, res, next){
+  const random = Math.floor(Math.random() * cont.getAll().length);
+  res.send(cont.getByID(random));
+});
 
-print('##############################################################');
-print('##                                                          ##');
-print('##                      INICIO DE TEST                      ##');
-print('##                                                          ##');
-print('##############################################################');
-print('');
-print('');
-print('AGREGO UN ELEMENTO Y REVISO EL FILE');
-print('--------------------------------------------------------------');
-print('');
+// Se inicia API
 
-let id = await micont.save(producto);
-print(`Se agrego elemento id: ${id}`);
-let printeable = await micont.getAll();
-print(printeable);
-
-print('');
-print('');
-print('AGREGO DOS ELEMENTOS MAS Y REVISO EL FILE');
-print('--------------------------------------------------------------');
-print('');
-
-id = await micont.save(producto2);
-print(`Se agrego elemento id: ${id}`);
-id = await micont.save(producto3);
-print(`Se agrego elemento id: ${id}`);
-printeable = await micont.getAll();
-print(printeable);
-
-print('');
-print('');
-print('OBTENGO EL ID 2');
-print('--------------------------------------------------------------');
-print('');
-
-printeable = await micont.getByID(2);
-print(printeable);
-
-print('');
-print('');
-print('ELIMINO EL ID 2 Y VERIFICO EL FILE');
-print('--------------------------------------------------------------');
-print('');
-
-await micont.deleteById(2);
-printeable = await micont.getAll();
-print(printeable);
-
-print('');
-print('');
-print('ELIMINO TODO Y VERIFICO EL FILE');
-print('--------------------------------------------------------------');
-print('');
-
-await micont.deleteAll();
-printeable = await micont.getAll();
-print(printeable);
+app.listen(port);
+console.log(`Inicio en el puerto ${port}`);
