@@ -27,6 +27,14 @@ router.get('/productos/:id', function(req, res, next){
   res.send(cont.getByID(req.params.id));
 });
 
+router.post('/productos', function(req, res, next){
+  res.send(cont.save({
+    title : req.body.nombre,
+    price : req.body.precio,
+    thumbnail: req.body.imagen
+  }));
+});
+
 // Se inicia API
 
 app.listen(port);
