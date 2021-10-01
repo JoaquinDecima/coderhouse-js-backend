@@ -43,7 +43,7 @@ router.put('/productos', function(req, res, next){
   if(cont.editByID(req.body.id, req.body.nombre, req.body.precio, req.body.imagen)){
     res.status(200);
   }else{
-    res.status(500);
+    res.status(200).json({error:'Producto no encontrado'});
   }
 });
 
