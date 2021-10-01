@@ -39,6 +39,14 @@ router.delete('/productos/:id', function(req, res, next){
   res.send(cont.deleteById(req.params.id));
 });
 
+router.put('/productos', function(req, res, next){
+  if(cont.editByID(req.body.id, req.body.nombre, req.body.precio, req.body.imagen)){
+    res.status(200);
+  }else{
+    res.status(500);
+  }
+});
+
 // Se inicia API
 
 app.listen(port);

@@ -39,4 +39,19 @@ export default class Contenedor{
     this.lastObjectID = 0;
     this.fileManager.writeData('[]');
   }
+
+  editByID(id, nombre, precio, imagen){
+    const elems = this.getAll();
+    var cambio = false
+    elems.forEach(elem =>{
+      if (elem.id == id){
+        elem.title = nombre;
+        elem.price = precio;
+        elem.thumbnail = imagen;
+        cambio = true
+      }
+    })
+    this.fileManager.writeData(JSON.stringify(elems,null,2));
+    return cambio
+  }
 }
