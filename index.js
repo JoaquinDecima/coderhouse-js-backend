@@ -23,6 +23,10 @@ router.get('/productoRandom', function(req, res, next){
   res.send(cont.getByID(random));
 });
 
+router.get('/productos/:id', function(req, res, next){
+  res.send(cont.getByID(req.params.id));
+});
+
 // Se inicia API
 
 app.listen(port);
