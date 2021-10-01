@@ -35,6 +35,10 @@ router.post('/productos', function(req, res, next){
   }));
 });
 
+router.delete('/productos/:id', function(req, res, next){
+  res.send(cont.deleteById(req.params.id));
+});
+
 // Se inicia API
 
 app.listen(port);
