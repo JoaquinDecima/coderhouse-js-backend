@@ -9,6 +9,7 @@ export default class Contenedor{
   }
 
   save(object){
+    console.log(object)
     this.lastObjectID += 1;               // Incremento ID
     object.id = this.lastObjectID;        // Seteo ID (Preferiblemente se utilizaria otro nombre porque ID es muy comun)
 
