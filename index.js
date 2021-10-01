@@ -6,16 +6,19 @@ import startEntorno from './entorno/expressEntorno.js'
 const app = express();
 const port = process.env.PORT || 8080
 const cont = new Contenedor('./productos.txt');
+const router = express.Router()
 
 startEntorno(cont);
 
+app.use('/api',router);
+
 // Se configura API
 
-app.get('/productos', function(req, res, next){
+router.get('/productos', function(req, res, next){
   res.send(cont.getAll());
 });
 
-app.get('/productoRandom', function(req, res, next){
+router.get('/productoRandom', function(req, res, next){
   const random = Math.floor(Math.random() * cont.getAll().length);
   res.send(cont.getByID(random));
 });
