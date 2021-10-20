@@ -1,17 +1,16 @@
 import express from 'express';
-import Contenedor from './src/filemanager/contenedor.js';
-import startEntorno from './entorno/expressEntorno.js';
-import bodyParser from 'body-parser';
+import Contenedor from './filemanager/contenedor.js';
+import startEntorno from '../entorno/expressEntorno.js';
+
 // SetUp del entorno
 const app = express();
 const port = process.env.PORT || 8080
-const cont = new Contenedor('./productos.txt');
+const cont = new Contenedor('../productos.txt');
 const router = express.Router();
 
 startEntorno(cont);
 app.use(express.static('./public'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 app.use('/api',router);
 
 // Se configura API
@@ -31,11 +30,12 @@ router.get('/productos/:id', function(req, res, next){
 
 router.post('/productos', function(req, res, next){
   console.log(req.body)
-  res.send(cont.save({
+  const id = cont.save({
     title : req.body.nombre,
     price : req.body.precio,
     thumbnail: req.body.imagen
-  }));
+  })
+  res.send({id: id});
 });
 
 router.delete('/productos/:id', function(req, res, next){
