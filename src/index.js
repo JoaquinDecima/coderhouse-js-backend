@@ -15,7 +15,7 @@ app.use(express.json());
 app.use('/api/productos',routerProductos);
 
 app.get('/', (req,res)=>{
-  res.render('index', req)
+  res.render('index', {req})
 })
 
 // Se inicia API
