@@ -1,5 +1,5 @@
 import express from 'express';
-import routerProductos from './routers/routerProductos.js';
+// import routerProductos from './routers/routerProductos.js';
 
 // SetUp del entorno
 const app = express();
@@ -17,7 +17,11 @@ app.get('/', (req,res)=>{
   res.render('index')
 })
 
+app.get('/productos/', (req,res)=>{
+  res.render('products')
+})
+
 // Se inicia API
 
 app.listen(port);
-console.log(`Inicio en el puerto ${port}`);
+console.log(`Inicio pode verlo en http://localhost:${port}`);
