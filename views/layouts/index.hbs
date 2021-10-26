@@ -119,7 +119,7 @@
                 <div class="col-10">
                   <p style="margin: 5px;">
                     <b class="text-primary">${elem.user}</b>
-                    <span style="color: #804000;">[${elem.date}]</span> </br>
+                    <span style="color: #804000;">${formatDate(elem.date)}</span> </br>
                     <i class="text-success">${elem.menssaje}</i>
                   </p>
                 </div>
@@ -146,7 +146,11 @@
           socket.emit('add-menssaje', {usuario,mensaje});
         }
         document.getElementById('chat-mensaje').value = '';
+      }
 
+      function formatDate(date){
+        const localdate = new Date(date);
+        return `[${localdate.getDate()}/${localdate.getMonth()}/${localdate.getFullYear()} ${localdate.getHours()}:${localdate.getMinutes()}:${localdate.getSeconds()}]`
       }
 
     </script>
