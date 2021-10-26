@@ -12,18 +12,27 @@ const port = process.env.PORT || 8080;
 
 app.set('view engine', 'ejs')
 // app.use(express.static('./public'));
-// app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Se configura API
 
 // app.use('/api/productos',routerProductos);
 
 app.get('/', (req,res)=>{
-  res.render('index', {productos: cont.getAll()})
+  res.render('index', {productos: cont.getAll()});
 })
 
 app.get('/productos/', (req,res)=>{
-  res.render('products')
+  res.render('products');
+})
+
+app.post('/productos/', (req,res)=>{
+  cont.save({
+    title : req.body.nombre,
+    price : req.body.precio,
+    thumbnail: req.body.imagen
+  })
+  res.redirect('/');
 })
 
 // Se inicia API
