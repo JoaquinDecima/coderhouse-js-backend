@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  div(class='container')
+    div(class='row')
+      div(class='col-12', style='margin-top: 30px;')
+        h1(class='text-center')='Agregar Producto'
+        form(action='/productos', method='POST')
+          label(for='nombre', class='form-label')='Nombre'
+          input(class='form-control', type='text', name='nombre', id='nombre', value='')
+          label(for='precio', class='form-label')='Precio'
+          input(class='form-control', type='number', name='precio', id='precio', value='')
+          label(for='imagen', class='form-label')='Imagen URL'
+          input(class='form-control', type='text', name='imagen', id='imagen', value='')
+          div(class='container')
+            div(class='row')
+              button(class='btn btn-primary col-12 text-center', style='margin-top: 30px;', type='submit')='Enviar'
