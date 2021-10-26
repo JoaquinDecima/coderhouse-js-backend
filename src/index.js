@@ -1,5 +1,10 @@
 import express from 'express';
 // import routerProductos from './routers/routerProductos.js';
+import Contenedor from './filemanager/contenedor.js';
+import startEntorno from '../entorno/expressEntorno.js';
+
+const cont = new Contenedor('../productos.txt');
+startEntorno(cont);
 
 // SetUp del entorno
 const app = express();
@@ -14,7 +19,7 @@ app.set('view engine', 'ejs')
 // app.use('/api/productos',routerProductos);
 
 app.get('/', (req,res)=>{
-  res.render('index')
+  res.render('index', {productos: cont.getAll()})
 })
 
 app.get('/productos/', (req,res)=>{
