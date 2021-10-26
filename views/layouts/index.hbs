@@ -74,8 +74,15 @@
           </tr>
           `
         }
-        document.querySelector('#productTable').innerHTML = productTable;
+        document.getElementById('productTable').innerHTML = productTable;
       })
+
+      function addProduct(){
+        const nombre = document.getElementById('nombre').value;
+        const precio = document.getElementById('precio').value;
+        const imagen = document.getElementById('imagen').value;
+        socket.emit('add-product', {nombre,precio,imagen});
+      }
 
     </script>
 

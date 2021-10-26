@@ -56,7 +56,7 @@ io.on('connection', socket =>{
       price : data.precio,
       thumbnail: data.imagen
     })
-    io.socket.emit('update-products', cont.getAll());
+    socket.emit('update-products', cont.getAll());
   })
 })
 
