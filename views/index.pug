@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  div(class='container', style='margin-top:20px; margin-bottom:20px;')
+    div(class='row')
+      each producto in productos
+        div(class='col-md-3')
+          div(class='card text-center', style='margin-bottom: 10px;')
+            img(src=producto.thumbnail, class='card-img-top', style='height: 300px;', alt=producto.title)
+            div(class='card-body')
+              h5(class='card-title')=producto.title
+              div(class='btn btn-primary')=producto.price
