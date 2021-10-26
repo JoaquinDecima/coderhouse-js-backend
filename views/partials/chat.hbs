@@ -1,16 +1,17 @@
 <div class="col-12" style="margin-top: 35px; margin-bottom: 20px;">
   <h2 class="text-center">Chat</h2>
-  <div class="card">
+  <form class="card">
     <div class="card-header">
       <div class="input-group">
         <span class="input-group-text" id="basic-addon1">@</span>
         <input
-          type="text"
+          type="email"
           class="form-control"
-          placeholder="Nombre del Usuario"
-          aria-label="Nombre del Usuario"
-          id="chat-name"
-          aria-describedby="basic-addon1" />
+          placeholder="Email del Usuario"
+          aria-label="Email del Usuario"
+          id="chat-mail"
+          aria-describedby="basic-addon1"
+          required />
       </div>
     </div>
     <div class="card-body" id="chat-text" style="height: 300px; overflow-y: scroll">
@@ -21,15 +22,15 @@
           type="text"
           class="form-control"
           id="chat-mensaje"
-          aria-describedby="button-addon2">
-        </textarea>
+          aria-describedby="button-addon2"></textarea>
         <button
           class="btn btn-outline-secondary"
           type="button"
+          onclick="sendMenssaje()"
           id="button-addon2">
-          Button
+          Enviar
         </button>
       </div>
     </div>
-  </div>
+  </form>
 </div>

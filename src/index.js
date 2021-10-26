@@ -4,9 +4,11 @@ import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 // import routerProductos from './routers/routerProductos.js';
 import Contenedor from './filemanager/contenedor.js';
+import ChatManager from './filemanager/chat.js'
 import startEntorno from '../entorno/expressEntorno.js';
 
-const cont = new Contenedor('../productos.txt');
+const cont = new Contenedor('./productos.txt');
+const chat = new ChatManager('./chat.txt');
 startEntorno(cont);
 
 // SetUp del entorno
@@ -14,6 +16,7 @@ const app = express();
 const httpServer = new HTTPServer(app);
 const io = new IOServer(httpServer);
 const PORT = process.env.PORT || 8080;
+
 
 app.engine('hbs', exphbs({
   extname: 'hbs',
@@ -49,6 +52,9 @@ io.on('connection', socket =>{
   // Se conecta y recive todos los productos
   socket.emit('update-products', cont.getAll());
 
+  // Se conecta y recive todo el historial de mensajes
+  socket.emit('update-menssajes', chat.getAll());
+
   // Agrego producto y envio propago Productos
   socket.on('add-product', data => {
     cont.save({
@@ -57,6 +63,16 @@ io.on('connection', socket =>{
       thumbnail: data.imagen
     })
     socket.emit('update-products', cont.getAll());
+  })
+
+  // Agrego mensaje y envio propago Mensajes
+  socket.on('add-menssaje', data => {
+    console.log(data);
+    chat.save({
+      user : data.usuario,
+      menssaje : data.mensaje
+    })
+    socket.emit('update-menssajes', chat.getAll());
   })
 })
 
