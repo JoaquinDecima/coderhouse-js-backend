@@ -59,9 +59,9 @@
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       const socket = io.connect();
-      let productTable = ``;
 
       socket.on('update-products', data => {
+        let productTable = ``;
         for (let elem of data){
           productTable += `
           <tr>
