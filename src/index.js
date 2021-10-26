@@ -10,7 +10,7 @@ startEntorno(cont);
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.set('view engine', 'ejs')
+app.set('view engine', 'pug')
 // app.use(express.static('./public'));
 app.use(express.urlencoded({ extended: true }));
 
