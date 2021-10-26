@@ -1,4 +1,5 @@
 import express from 'express';
+import exphbs from 'express-handlebars';
 // import routerProductos from './routers/routerProductos.js';
 import Contenedor from './filemanager/contenedor.js';
 import startEntorno from '../entorno/expressEntorno.js';
@@ -10,7 +11,11 @@ startEntorno(cont);
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.set('view engine', 'ejs')
+app.engine('hbs', exphbs({
+  extname: 'hbs',
+  defaultLayout: 'index.hbs'
+}))
+app.set('view engine', 'hbs')
 // app.use(express.static('./public'));
 app.use(express.urlencoded({ extended: true }));
 
