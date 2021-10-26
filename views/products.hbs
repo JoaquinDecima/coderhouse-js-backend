@@ -1,8 +1,10 @@
 <div class="container">
   <div class="row">
-    <div class="col-12" style="margin-top: 30px;">
+    <div class="col-md-4" style="margin-top: 35px;">
 
-      <h1 class="text-center">Agregar Producto</h1>
+      <h2 class="text-center" style="margin-bottom: 20px">
+        Agregar Producto
+      </h2>
 
       <form class="" action="/productos" method="POST">
         <label for="nombre" class="form-label">Nombre</label>
@@ -42,5 +44,8 @@
       </form>
 
     </div>
+
+    {{> productstable}}
+
   </div>
 </div>

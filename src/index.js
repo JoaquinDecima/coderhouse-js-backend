@@ -44,6 +44,22 @@ app.post('/productos/', (req,res)=>{
   res.redirect('/');
 })
 
+io.on('connection', socket =>{
+
+  // Se conecta y recive todos los productos
+  socket.emit('update-products', cont.getAll());
+
+  // Agrego producto y envio propago Productos
+  socket.on('add-product', data => {
+    cont.save({
+      title : data.nombre,
+      price : data.precio,
+      thumbnail: data.imagen
+    })
+    io.socket.emit('update-products', cont.getAll());
+  })
+})
+
 // Se inicia API
 
 const conectedServer = httpServer.listen(PORT, () => {
