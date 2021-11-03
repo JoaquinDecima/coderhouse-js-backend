@@ -10,16 +10,9 @@ export default class ContenedorSQL{
     this.table = tableName;
   }
 
-  save(object){
-    console.log(object)
-    this.lastObjectID += 1;               
-    object.id = this.lastObjectID;
-
-    const content = this.getAll();
-    content.push(object);
-    //this.fileManager.writeData(JSON.stringify(content,null,2));
-
-    return this.lastObjectID;
+  async save(object){
+    const nId = await this.dbManager(this.table).insert(object);
+    return nId[0];
   }
 
   async getAll(){

@@ -42,7 +42,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req,res)=>{
   const productos = JSON.parse(await cont.getAll())
-  console.log(productos);
   res.render('index', {productos});
   
 })
@@ -51,8 +50,8 @@ app.get('/productos/', (req,res)=>{
   res.render('products');
 })
 
-app.post('/productos/', (req,res)=>{
-  cont.save({
+app.post('/productos/', async (req,res)=>{
+  await cont.save({
     title : req.body.nombre,
     price : req.body.precio,
     thumbnail: req.body.imagen
@@ -70,12 +69,12 @@ io.on('connection', async socket =>{
 
   // Agrego producto y envio propago Productos
   socket.on('add-product', async data => {
-    cont.save({
+    await cont.save({
       title : data.nombre,
       price : data.precio,
       thumbnail: data.imagen
     })
-    socket.emit('update-products', await cont.getAll());
+    socket.emit('update-products', JSON.parse(await cont.getAll()));
   })
 
   // Agrego mensaje y envio propago Mensajes
