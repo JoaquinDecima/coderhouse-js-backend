@@ -32,18 +32,11 @@ export default class ContenedorSQL{
 //     this.fileManager.writeData('[]');
 //   }
 
-  editByID(id, nombre, precio, imagen){
-    const elems = this.getAll();
-    var cambio = false
-    elems.forEach(elem =>{
-      if (elem.id == id){
-        elem.title = nombre;
-        elem.price = precio;
-        elem.thumbnail = imagen;
-        cambio = true
-      }
+  async editByID(id, title, price, thumbnail){
+    await this.dbManager(this.table).where(id).update({
+        title,
+        price,
+        thumbnail
     })
-    //this.fileManager.writeData(JSON.stringify(elems,null,2));
-    return cambio
   }
 }
