@@ -37,10 +37,10 @@ export default class ContenedorSQL{
     //this.fileManager.writeData(JSON.stringify(elems,null,2));
   }
 
-  deleteAll(){
-    this.lastObjectID = 0;
-    //this.fileManager.writeData('[]');
-  }
+//   deleteAll(){
+//     this.lastObjectID = 0;
+//     this.fileManager.writeData('[]');
+//   }
 
   editByID(id, nombre, precio, imagen){
     const elems = this.getAll();
