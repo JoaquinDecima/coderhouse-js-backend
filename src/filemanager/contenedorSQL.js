@@ -16,18 +16,15 @@ export default class ContenedorSQL{
   }
 
   async getAll(){
-    return JSON.stringify(await this.dbManager(this.table).select())
+    return JSON.stringify(await this.dbManager(this.table).select());
   }
 
-  getByID(numID){
-    const elems = this.getAll();
-    return elems.find(elem => elem.id == numID);
+  async getByID(id){
+    return JSON.stringify(await this.dbManager(this.table).select().where(id));
   }
 
-  deleteById(numID){
-    let elems = this.getAll();
-    elems = elems.filter(elem => elem.id != numID);
-    //this.fileManager.writeData(JSON.stringify(elems,null,2));
+  async deleteById(id){
+    await this.dbManager(this.table).where(id).del();
   }
 
 //   deleteAll(){
