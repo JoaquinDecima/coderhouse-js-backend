@@ -6,7 +6,7 @@ import { Server as IOServer } from 'socket.io';
 // import Contenedor from './filemanager/contenedor.js';
 import ContenedorSQL from './filemanager/contenedorSQL.js';
 import ChatManager from './filemanager/chat.js'
-import startEntorno from '../entorno/expressEntorno.js';
+// import startEntorno from '../entorno/expressEntorno.js';
 
 const cont = new ContenedorSQL({
   client: 'mysql',
@@ -18,7 +18,12 @@ const cont = new ContenedorSQL({
     database: 'coderhouse'
   }
 }, "productos");
-const chat = new ChatManager('./chat.txt');
+const chat = new ContenedorSQL({
+  client: 'sqlite3',
+  connection: {
+    filename: "./chat.sqlite"
+  }
+},'chat');
 // startEntorno(cont);
 
 // SetUp del entorno
@@ -65,7 +70,7 @@ io.on('connection', async socket =>{
   socket.emit('update-products', JSON.parse(await cont.getAll()));
 
   // Se conecta y recive todo el historial de mensajes
-  socket.emit('update-menssajes', chat.getAll());
+  socket.emit('update-menssajes', JSON.parse(await chat.getAll()));
 
   // Agrego producto y envio propago Productos
   socket.on('add-product', async data => {
@@ -78,13 +83,13 @@ io.on('connection', async socket =>{
   })
 
   // Agrego mensaje y envio propago Mensajes
-  socket.on('add-menssaje', data => {
-    console.log(data);
-    chat.save({
+  socket.on('add-menssaje', async data => {
+    await chat.save({
       user : data.usuario,
-      menssaje : data.mensaje
+      menssaje : data.mensaje,
+      date : new Date()
     })
-    socket.emit('update-menssajes', chat.getAll());
+    socket.emit('update-menssajes', JSON.parse(await chat.getAll()));
   })
 })
 

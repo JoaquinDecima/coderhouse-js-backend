@@ -1,6 +1,4 @@
-import FileManager from './filemanager.js';
 import knex from 'knex';
-import { json } from 'express';
 
 export default class ContenedorSQL{
   lastObjectID = 0;
