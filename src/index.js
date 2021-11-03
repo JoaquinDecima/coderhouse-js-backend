@@ -3,13 +3,23 @@ import exphbs from 'express-handlebars';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 // import routerProductos from './routers/routerProductos.js';
-import Contenedor from './filemanager/contenedor.js';
+// import Contenedor from './filemanager/contenedor.js';
+import ContenedorSQL from './filemanager/contenedorSQL.js';
 import ChatManager from './filemanager/chat.js'
 import startEntorno from '../entorno/expressEntorno.js';
 
-const cont = new Contenedor('./productos.txt');
+const cont = new ContenedorSQL({
+  client: 'mysql',
+  connection:{
+    host: '127.0.0.1',
+    port: '3306',
+    user: 'jdecima',
+    password: 'jdecima',
+    database: 'coderhouse'
+  }
+}, "productos");
 const chat = new ChatManager('./chat.txt');
-startEntorno(cont);
+// startEntorno(cont);
 
 // SetUp del entorno
 const app = express();
@@ -30,8 +40,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // app.use('/api/productos',routerProductos);
 
-app.get('/', (req,res)=>{
-  res.render('index', {productos: cont.getAll()});
+app.get('/', async (req,res)=>{
+  const productos = JSON.parse(await cont.getAll())
+  console.log(productos);
+  res.render('index', {productos});
+  
 })
 
 app.get('/productos/', (req,res)=>{
@@ -47,22 +60,22 @@ app.post('/productos/', (req,res)=>{
   res.redirect('/');
 })
 
-io.on('connection', socket =>{
+io.on('connection', async socket =>{
 
   // Se conecta y recive todos los productos
-  socket.emit('update-products', cont.getAll());
+  socket.emit('update-products', JSON.parse(await cont.getAll()));
 
   // Se conecta y recive todo el historial de mensajes
   socket.emit('update-menssajes', chat.getAll());
 
   // Agrego producto y envio propago Productos
-  socket.on('add-product', data => {
+  socket.on('add-product', async data => {
     cont.save({
       title : data.nombre,
       price : data.precio,
       thumbnail: data.imagen
     })
-    socket.emit('update-products', cont.getAll());
+    socket.emit('update-products', await cont.getAll());
   })
 
   // Agrego mensaje y envio propago Mensajes
