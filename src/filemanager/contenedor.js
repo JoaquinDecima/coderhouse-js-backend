@@ -1,4 +1,3 @@
-import { runInThisContext } from 'vm';
 import FileManager from './filemanager.js';
 
 export default class Contenedor{
