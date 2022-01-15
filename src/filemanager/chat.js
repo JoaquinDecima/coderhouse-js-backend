@@ -1,4 +1,4 @@
-const { normalize, schema } = require("normalizr");
+import { normalize, schema } from "normalizr";
 import FileManager from './filemanager.js';
 
 export default class ChatManager{
