@@ -7,6 +7,8 @@ import { Server as IOServer } from 'socket.io';
 import ContenedorSQL from './filemanager/contenedorSQL.js';
 import ChatManager from './filemanager/chat.js'
 // import startEntorno from '../entorno/expressEntorno.js';
+import faker from 'faker'
+faker.locale = 'es'
 
 const cont = new ContenedorSQL({
   client: 'mysql',
@@ -18,6 +20,7 @@ const cont = new ContenedorSQL({
     database: 'coderhouse'
   }
 }, "productos");
+
 const chat = new ContenedorSQL({
   client: 'sqlite3',
   connection: {
@@ -48,11 +51,50 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', async (req,res)=>{
   const productos = JSON.parse(await cont.getAll())
   res.render('index', {productos});
-  
 })
 
 app.get('/productos/', (req,res)=>{
   res.render('products');
+})
+
+app.get('/productos-test/', (req,res)=>{
+  const productos = [{
+    title: faker.commerce.productName,
+    price: faker.datatype.number({
+        'min': 23,
+        'max': 780
+      }),
+    thumbnail: faker.image.imageUrl
+  },{
+    title: faker.commerce.productName,
+    price: faker.datatype.number({
+        'min': 23,
+        'max': 780
+      }),
+    thumbnail: faker.image.imageUrl
+  },{
+    title: faker.commerce.productName,
+    price: faker.datatype.number({
+        'min': 23,
+        'max': 780
+      }),
+    thumbnail: faker.image.imageUrl
+  },{
+    title: faker.commerce.productName,
+    price: faker.datatype.number({
+        'min': 23,
+        'max': 780
+      }),
+    thumbnail: faker.image.imageUrl
+  },{
+    title: faker.commerce.productName,
+    price: faker.datatype.number({
+        'min': 23,
+        'max': 780
+      }),
+    thumbnail: faker.image.imageUrl
+  }]
+  res.render('list-test', {productos});
 })
 
 app.post('/productos/', async (req,res)=>{
