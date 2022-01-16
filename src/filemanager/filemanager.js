@@ -1,16 +1,16 @@
 import fs from 'fs';
 
 export default class FileManager{
-  constructor(path){
+  constructor(path, format = "[]"){
     this.path = path;
-    this.check();
+    this.check(format);
   }
 
-  async check() {
+  async check(format) {
     try {
       await fs.access(this.path, 'utf8')
     } catch {
-      fs.writeFileSync(this.path,'[]')
+      fs.writeFileSync(this.path, format)
     }
   }
 
