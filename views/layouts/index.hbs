@@ -96,9 +96,10 @@
         }else{
           var dataNorm = normalizr.denormalize(data.result, chat, data.entities)
         }
+
+        document.getElementById('compression-level').innerHTML = `Nivel de compresion ${100 - ((JSON.stringify(dataNorm).length * 100) / JSON.stringify(data).length)}%`
         
         for (let elemNorm of dataNorm.mensajes){
-          console.log(elemNorm.author)
           if (elemNorm.author.email == document.getElementById('chat-mail').value) {
             chatMenssajes += `
             <div
