@@ -21,12 +21,14 @@ const cont = new ContenedorSQL({
   }
 }, "productos");
 
-const chat = new ContenedorSQL({
-  client: 'sqlite3',
-  connection: {
-    filename: "./chat.sqlite"
-  }
-},'chat');
+const chat = new ChatManager("./chat.data");
+
+// const chat = new ContenedorSQL({
+//   client: 'sqlite3',
+//   connection: {
+//     filename: "./chat.sqlite"
+//   }
+// },'chat');
 // startEntorno(cont);
 
 // SetUp del entorno
@@ -112,7 +114,7 @@ io.on('connection', async socket =>{
   socket.emit('update-products', JSON.parse(await cont.getAll()));
 
   // Se conecta y recive todo el historial de mensajes
-  socket.emit('update-menssajes', JSON.parse(await chat.getAll()));
+  socket.emit('update-menssajes', chat.getAll());
 
   // Agrego producto y envio propago Productos
   socket.on('add-product', async data => {
@@ -121,17 +123,24 @@ io.on('connection', async socket =>{
       price : data.precio,
       thumbnail: data.imagen
     })
-    socket.emit('update-products', JSON.parse(await cont.getAll()));
+    socket.emit('update-products', await cont.getAll());
   })
 
   // Agrego mensaje y envio propago Mensajes
-  socket.on('add-menssaje', async data => {
-    await chat.save({
-      user : data.usuario,
+  socket.on('add-menssaje', data => {
+    chat.save({
+      author : {
+        email: data.usuario,
+        nombre: data.name,
+        apellido: data.lastname,
+        edad: data.edad,
+        alias: data.alias,
+        avatar: data.avatar
+      },
       menssaje : data.mensaje,
       date : new Date()
     })
-    socket.emit('update-menssajes', JSON.parse(await chat.getAll()));
+    socket.emit('update-menssajes', chat.getAll());
   })
 })
 
