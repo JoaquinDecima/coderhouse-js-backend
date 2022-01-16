@@ -209,3 +209,5 @@ $RECYCLE.BIN/
 ## This Project
 productos.txt
 chat.txt
+chat.data
+chat.sqlite
