@@ -68,12 +68,21 @@ app.use(express.json());
 // app.use('/api/productos',routerProductos);
 
 app.get('/', async (req,res)=>{
-  const productos = JSON.parse(await cont.getAll())
-  res.render('index', {productos});
+  if (req.session.usuario){
+    const productos = JSON.parse(await cont.getAll())
+    res.render('index', {productos});
+  }else{
+    res.redirect('/login/');
+  }
 })
 
 app.get('/productos/', (req,res)=>{
-  res.render('products');
+  if (req.session.usuario){
+    res.render('products');
+  }else{
+    res.redirect('/login/');
+  }
+  
 })
 
 app.get('/productos-test/', (req,res)=>{
@@ -126,12 +135,28 @@ app.post('/productos/', async (req,res)=>{
 })
 
 app.get('/login/', (req,res)=>{
-  res.render('login');
+  if (req.session.usuario){
+    res.redirect('/')    
+  }else{
+    res.render('login');
+  }
+  
 })
 
 app.post('/api/login/', async (req,res)=>{
-  console.log(req.body);
+  req.session.usuario = req.body.usuario;
+  req.session.name = req.body.name;
+  req.session.lastname = req.body.lastname;
+  req.session.edad = req.body.edad;
+  req.session.avatar = req.body.avatar;
+  req.session.alias = req.body.alias;
+  req.session.date = new Date();
   res.redirect('/');
+})
+
+app.post('/api/logout/', async (req,res)=>{
+  req.session.destroy();
+  res.redirect('/login/');
 })
 
 io.on('connection', async socket =>{

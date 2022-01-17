@@ -118,7 +118,7 @@
     const avatar = document.getElementById('avatar').value;
     const alias = document.getElementById('alias').value;
     
-    if (usuario && name && lastname && edad && avatar && alias) {
+    if (usuario && name && lastname && edad && alias) {
       fetch('/api/login/', {
         method: 'POST',
         redirect: 'follow',
