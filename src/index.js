@@ -68,21 +68,21 @@ app.use(express.json());
 // app.use('/api/productos',routerProductos);
 
 app.get('/', async (req,res)=>{
-  if (req.session.usuario){
+  if (req.session.usuario && chekDate(req.session.date)){
     req.session.date = new Date();
     const productos = JSON.parse(await cont.getAll())
     res.render('index', {productos});
   }else{
-    res.redirect('/login/');
+    res.redirect('/logout/');
   }
 })
 
 app.get('/productos/', (req,res)=>{
-  if (req.session.usuario){
+  if (req.session.usuario && chekDate(req.session.date)){
     req.session.date = new Date();
     res.render('products');
   }else{
-    res.redirect('/login/');
+    res.redirect('/logout/');
   }
   
 })
@@ -145,6 +145,15 @@ app.get('/login/', (req,res)=>{
   
 })
 
+app.get('/logout/', (req,res)=>{
+  if (req.session.usuario && chekDate(req.session.date)){
+    res.render('logout');    
+  }else{
+    res.redirect('/login/');
+  }
+  
+})
+
 app.post('/api/login/', async (req,res)=>{
   req.session.usuario = req.body.usuario;
   req.session.name = req.body.name;
@@ -195,6 +204,11 @@ io.on('connection', async socket =>{
     socket.emit('update-menssajes', chat.getAll());
   })
 })
+
+function chekDate(date){
+  let resta = (new Date()).getTime() - date.getTime();
+  return(Math.round(resta/ (1000*60) < 10))
+}
 
 // Se inicia API
 

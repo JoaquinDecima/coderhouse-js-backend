@@ -1,0 +1,59 @@
+<div class="container" style="margin-top:20px; margin-bottom:20px;">
+  <div class="row">
+
+    <div class="col-12" id="saludo">
+
+    </div>
+    
+  </div>
+</div>
+
+<style>
+  .input-group{
+    margin-top: 30px;
+  }
+
+  #login-img{
+    background-image: url('https://s3.us-west-2.amazonaws.com/puntoapunto.com.ar/wp-content/uploads/2020/08/24124210/ecommerce.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .cont-log{
+    padding: 40px;
+  }
+</style>
+
+<script>
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  async function logout(){
+    await sleep(200);
+    fetch('/api/logout/', {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (response.redirected) {
+        sessionStorage.setItem("usuario", false);
+        sessionStorage.setItem("name", false);
+        sessionStorage.setItem("lastname", false);
+        sessionStorage.setItem("edad", false);
+        sessionStorage.setItem("avatar", false);
+        sessionStorage.setItem("alias", false);
+        window.location.href = response.url;
+      }
+    })
+  }
+
+  document.getElementById('saludo').innerHTML = `
+      <h1 class="text-center">
+        Adios ${sessionStorage.getItem("alias")}
+      </h1>`;
+  logout();
+</script>
