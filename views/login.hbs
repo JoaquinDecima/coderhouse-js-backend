@@ -1,0 +1,142 @@
+<div class="container" style="margin-top:20px; margin-bottom:20px;">
+  <div class="row">
+
+    <div class="col-md-2"></div>
+    <div class="col-md-8 container-fluid">
+      <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-8 container">
+          <div class="row">
+
+            <div id="error-section" class="col-12"></div>
+            <div class="col-6">
+              <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">Nombre</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Nombre del Usuario"
+                  aria-label="Nombre del Usuario"
+                  id="name"
+                  aria-describedby="basic-addon1"
+                  required />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">Apellido</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Apellido del Usuario"
+                  aria-label="Apellido del Usuario"
+                  id="lastname"
+                  aria-describedby="basic-addon1"
+                  required />
+              </div>
+            </div>
+            <div class="col-8">
+              <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">Alias</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Alias del Usuario"
+                  aria-label="Alias del Usuario"
+                  id="alias"
+                  aria-describedby="basic-addon1"
+                  required />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">Edad</span>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Edad del Usuario"
+                  aria-label="Edad del Usuario"
+                  id="edad"
+                  aria-describedby="basic-addon1"
+                  required />
+              </div>
+            </div>
+            <div class="input-group">
+              <span class="input-group-text" id="basic-addon1">Avatar</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="URL del Avatar"
+                aria-label="URL del Avatar"
+                id="avatar"
+                aria-describedby="basic-addon1"
+                required />
+            </div>
+            <div class="input-group">
+              <span class="input-group-text" id="basic-addon1">@</span>
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Email del Usuario"
+                aria-label="Email del Usuario"
+                id="mail"
+                aria-describedby="basic-addon1"
+                required />
+            </div>
+            <div class="input-group mb-3"></div>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                onclick="login()"
+                id="button-addon2">
+                Enviar
+              </button>
+          </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2"></div>
+    
+  </div>
+</div>
+
+<style>
+  .input-group{
+    margin-top: 30px;
+  }
+</style>
+
+<script>
+  function login(){
+
+    const usuario = document.getElementById('mail').value;
+    const name = document.getElementById('name').value;
+    const lastname = document.getElementById('lastname').value;
+    const edad = document.getElementById('edad').value;
+    const avatar = document.getElementById('avatar').value;
+    const alias = document.getElementById('alias').value;
+    
+    if (usuario && name && lastname && edad && avatar && alias) {
+      fetch('/api/login/', {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({usuario,name,lastname,edad,avatar,alias})
+      })
+      .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+      })
+    }else{
+      document.getElementById('error-section').innerHTML = `
+      <div class="alert alert-danger" role="alert">
+        Ingrese los datos correctamente
+      </div>`;
+    }
+  }
+</script>

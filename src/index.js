@@ -1,15 +1,18 @@
 import express from 'express';
 import exphbs from 'express-handlebars';
+import session from 'express-session';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 // import routerProductos from './routers/routerProductos.js';
 // import Contenedor from './filemanager/contenedor.js';
 import ContenedorSQL from './filemanager/contenedorSQL.js';
 import ChatManager from './filemanager/chat.js'
+import MongoStore from 'connect-mongo';
 // import startEntorno from '../entorno/expressEntorno.js';
 import faker from 'faker'
 faker.locale = 'es'
 
+const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 const cont = new ContenedorSQL({
   client: 'mysql',
   connection:{
@@ -37,6 +40,19 @@ const httpServer = new HTTPServer(app);
 const io = new IOServer(httpServer);
 const PORT = process.env.PORT || 8080;
 
+app.use(session({
+  store: MongoStore.create({
+      mongoUrl: 'mongodb://jdecima:coderhouse@coderhouse-shard-00-00.gj3mp.mongodb.net:27017,coderhouse-shard-00-01.gj3mp.mongodb.net:27017,coderhouse-shard-00-02.gj3mp.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-80zdtm-shard-0&authSource=admin&retryWrites=true&w=majority',
+      mongoOptions: advancedOptions
+  }),
+
+  secret: 'patojad.com.ar',
+  resave: false,
+  saveUninitialized: false/*,
+  cookie: {
+      maxAge: 4000
+  }*/
+}))
 
 app.engine('hbs', exphbs({
   extname: 'hbs',
@@ -45,6 +61,7 @@ app.engine('hbs', exphbs({
 app.set('view engine', 'hbs')
 // app.use(express.static('./public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Se configura API
 
@@ -105,6 +122,15 @@ app.post('/productos/', async (req,res)=>{
     price : req.body.precio,
     thumbnail: req.body.imagen
   })
+  res.redirect('/');
+})
+
+app.get('/login/', (req,res)=>{
+  res.render('login');
+})
+
+app.post('/api/login/', async (req,res)=>{
+  console.log(req.body);
   res.redirect('/');
 })
 
