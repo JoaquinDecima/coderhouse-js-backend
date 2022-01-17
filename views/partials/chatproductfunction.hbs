@@ -42,7 +42,7 @@
         document.getElementById('compression-level').innerHTML = `Nivel de compresion ${100 - ((JSON.stringify(dataNorm).length * 100) / JSON.stringify(data).length)}%`
         
         for (let elemNorm of dataNorm.mensajes){
-          if (elemNorm.author.email == document.getElementById('chat-mail').value) {
+          if (elemNorm.author.email == sessionStorage.getItem("usuario")) {
             chatMenssajes += `
             <div
               class="text-white ms-auto container-fluid"
@@ -98,13 +98,13 @@
       }
 
       function sendMenssaje(){
-        const usuario = document.getElementById('chat-mail').value;
+        const usuario = sessionStorage.getItem("usuario");
         const mensaje = document.getElementById('chat-mensaje').value;
-        const name = document.getElementById('chat-name').value;
-        const lastname = document.getElementById('chat-lastname').value;
-        const edad = document.getElementById('chat-edad').value;
-        const avatar = document.getElementById('chat-avatar').value;
-        const alias = document.getElementById('chat-alias').value;
+        const name = sessionStorage.getItem("name");
+        const lastname = sessionStorage.getItem("lastname");
+        const edad = sessionStorage.getItem("edad");
+        const avatar = sessionStorage.getItem("avatar");
+        const alias = sessionStorage.getItem("alias");
 
         if (usuario.length > 1) {
           socket.emit('add-menssaje', {usuario,mensaje,name,lastname,edad,avatar,alias});
@@ -117,4 +117,14 @@
         return `[${localdate.getDate()}/${localdate.getMonth()}/${localdate.getFullYear()} ${localdate.getHours()}:${localdate.getMinutes()}:${localdate.getSeconds()}]`
       }
 
+    </script>
+    <script>
+      let imgChat = `<img
+                      src="${sessionStorage.getItem("img") || 'http://www.gravatar.com/avatar/'.concat(MD5(sessionStorage.getItem("usuario").toLowerCase()))}"
+                      class="img-fluid rounded" />`
+      
+      let nameChat = `<p><b>${sessionStorage.getItem("name")} ${sessionStorage.getItem("lastname")}</b> (${sessionStorage.getItem("alias")})</p><p>${sessionStorage.getItem("usuario")}</p>`;
+
+      document.getElementById('img-chat').innerHTML = imgChat;
+      document.getElementById('name-chat').innerHTML = nameChat;
     </script>

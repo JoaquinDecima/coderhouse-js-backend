@@ -69,6 +69,7 @@ app.use(express.json());
 
 app.get('/', async (req,res)=>{
   if (req.session.usuario){
+    req.session.date = new Date();
     const productos = JSON.parse(await cont.getAll())
     res.render('index', {productos});
   }else{
@@ -78,6 +79,7 @@ app.get('/', async (req,res)=>{
 
 app.get('/productos/', (req,res)=>{
   if (req.session.usuario){
+    req.session.date = new Date();
     res.render('products');
   }else{
     res.redirect('/login/');
@@ -150,7 +152,6 @@ app.post('/api/login/', async (req,res)=>{
   req.session.edad = req.body.edad;
   req.session.avatar = req.body.avatar;
   req.session.alias = req.body.alias;
-  req.session.date = new Date();
   res.redirect('/');
 })
 
