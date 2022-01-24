@@ -1,6 +1,9 @@
 import express from 'express';
 import exphbs from 'express-handlebars';
 import session from 'express-session';
+import passport from 'passport';
+import LocalStrategy from 'passport-local';
+import UserController from './filemanager/userController.js';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 // import routerProductos from './routers/routerProductos.js';
@@ -11,6 +14,30 @@ import MongoStore from 'connect-mongo';
 // import startEntorno from '../entorno/expressEntorno.js';
 import faker from 'faker'
 faker.locale = 'es'
+
+const users = new UserController();
+
+passport.use('register', new LocalStrategy(async (req, done) =>{
+    console.log(req.body);
+    if (await users.addUser(req.body)){
+      return done(null, req.body)
+    }else{
+      console.error("EXPLOTO");
+      return done("no se pudo crear usuario")
+    }
+  })
+)
+
+passport.use('login', new LocalStrategy(async (req, user, pass, done)=>{
+    let usuario = await users.getUser(user);
+    if(usuario && usuario.password == pass){
+      return done(null, usuario);
+    }else{
+      return done(null, false);
+    }
+  }) 
+
+)
 
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 const cont = new ContenedorSQL({
@@ -53,6 +80,8 @@ app.use(session({
       maxAge: 4000
   }*/
 }))
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.engine('hbs', exphbs({
   extname: 'hbs',
@@ -136,13 +165,38 @@ app.post('/productos/', async (req,res)=>{
   res.redirect('/');
 })
 
+app.post('/api/register/', passport.authenticate('register', { 
+  failureRedirect: '/failregister',
+  successRedirect: '/' 
+}))
+
+app.get('/failregister/', (req, res) => {
+  res.render('register-error');
+})
+
+app.post('/api/login/', passport.authenticate('login', { 
+  failureRedirect: '/faillogin',
+  successRedirect: '/' 
+}))
+
+app.get('/faillogin', (req, res) => {
+  res.render('login-error');
+})
+
 app.get('/login/', (req,res)=>{
   if (req.session.usuario){
     res.redirect('/')    
   }else{
     res.render('login');
   }
-  
+})
+
+app.get('/register/', (req,res)=>{
+  if (req.session.usuario){
+    res.redirect('/')    
+  }else{
+    res.render('register');
+  }
 })
 
 app.get('/logout/', (req,res)=>{
@@ -154,15 +208,15 @@ app.get('/logout/', (req,res)=>{
   
 })
 
-app.post('/api/login/', async (req,res)=>{
-  req.session.usuario = req.body.usuario;
-  req.session.name = req.body.name;
-  req.session.lastname = req.body.lastname;
-  req.session.edad = req.body.edad;
-  req.session.avatar = req.body.avatar;
-  req.session.alias = req.body.alias;
-  res.redirect('/');
-})
+// app.post('/api/login/', async (req,res)=>{
+//   req.session.usuario = req.body.usuario;
+//   req.session.name = req.body.name;
+//   req.session.lastname = req.body.lastname;
+//   req.session.edad = req.body.edad;
+//   req.session.avatar = req.body.avatar;
+//   req.session.alias = req.body.alias;
+//   res.redirect('/');
+// })
 
 app.post('/api/logout/', async (req,res)=>{
   req.session.destroy();
