@@ -6,9 +6,9 @@ export default class UserController{
     }
 
     async addUser(user){
-        user._id = user.usuario;
-        console.log(await this.db.readDataByID(user.usuario));
-        if (!(await this.db.readDataByID(user.usuario))) {
+        user._id = user.username;
+        let bol = (await this.db.readDataByID(user.username)) == [];
+        if ((await this.db.readDataByID(user.username)) != []) {
             await this.db.writeData(user);
             return true
         }else{

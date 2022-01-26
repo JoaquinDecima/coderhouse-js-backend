@@ -4,6 +4,7 @@ import session from 'express-session';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import UserController from './filemanager/userController.js';
+import bcrypt from 'bcryptjs'
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 // import routerProductos from './routers/routerProductos.js';
@@ -15,22 +16,29 @@ import MongoStore from 'connect-mongo';
 import faker from 'faker'
 faker.locale = 'es'
 
+const salt = bcrypt.genSaltSync(10);
 const users = new UserController();
+const usuarios = [];
 
-passport.use('register', new LocalStrategy(async (req, done) =>{
-    console.log(req.body);
-    if (await users.addUser(req.body)){
-      return done(null, req.body)
+passport.use('register', new LocalStrategy(async (username, password, done) =>{
+  let hashpass = bcrypt.hashSync(password, salt);
+  let usuario = {username, password: hashpass};
+    if (await users.addUser(usuario)){
+      usuarios.push(usuario);
+      return done(null, usuario);
     }else{
-      console.error("EXPLOTO");
-      return done("no se pudo crear usuario")
+      return done(false);
     }
   })
 )
 
-passport.use('login', new LocalStrategy(async (req, user, pass, done)=>{
-    let usuario = await users.getUser(user);
-    if(usuario && usuario.password == pass){
+passport.use('login', new LocalStrategy(async (username, password, done)=>{
+    let usuario = await users.getUser(username);
+    console.log(usuario);
+    let hashpass = bcrypt.hashSync(password, salt);
+    console.log(usuario[0].password == hashpass);
+    console.log(hashpass);
+    if(usuario[0].password == hashpass){
       return done(null, usuario);
     }else{
       return done(null, false);
@@ -38,6 +46,14 @@ passport.use('login', new LocalStrategy(async (req, user, pass, done)=>{
   }) 
 
 )
+
+passport.serializeUser(function (usuario, done) {
+  done(null, usuario);
+});
+
+passport.deserializeUser(function (usuario, done) {
+  done(null, usuario);
+});
 
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 const cont = new ContenedorSQL({
@@ -75,10 +91,10 @@ app.use(session({
 
   secret: 'patojad.com.ar',
   resave: false,
-  saveUninitialized: false/*,
+  saveUninitialized: false,
   cookie: {
-      maxAge: 4000
-  }*/
+      maxAge: 60 * 10
+  }
 }))
 app.use(passport.initialize());
 app.use(passport.session());
@@ -92,28 +108,25 @@ app.set('view engine', 'hbs')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+function isAuth(req, res, next) {
+  if (req.isAuthenticated()) {
+    next()
+  } else {
+    res.redirect('/logout/')
+  }
+}
+
 // Se configura API
 
 // app.use('/api/productos',routerProductos);
 
-app.get('/', async (req,res)=>{
-  if (req.session.usuario && chekDate(req.session.date)){
-    req.session.date = new Date();
-    const productos = JSON.parse(await cont.getAll())
-    res.render('index', {productos});
-  }else{
-    res.redirect('/logout/');
-  }
+app.get('/', isAuth, async (req,res)=>{
+  const productos = JSON.parse(await cont.getAll())
+  res.render('index', {productos});
 })
 
-app.get('/productos/', (req,res)=>{
-  if (req.session.usuario && chekDate(req.session.date)){
-    req.session.date = new Date();
+app.get('/productos/', isAuth, (req,res)=>{
     res.render('products');
-  }else{
-    res.redirect('/logout/');
-  }
-  
 })
 
 app.get('/productos-test/', (req,res)=>{
@@ -167,17 +180,23 @@ app.post('/productos/', async (req,res)=>{
 
 app.post('/api/register/', passport.authenticate('register', { 
   failureRedirect: '/failregister',
+  failureMessage: true,
   successRedirect: '/' 
 }))
-
-app.get('/failregister/', (req, res) => {
-  res.render('register-error');
-})
 
 app.post('/api/login/', passport.authenticate('login', { 
   failureRedirect: '/faillogin',
   successRedirect: '/' 
 }))
+
+app.post('/api/logout/', async (req,res)=>{
+  req.session.destroy();
+  res.redirect('/login/');
+})
+
+app.get('/failregister/', (req, res) => {
+  res.render('register-error');
+})
 
 app.get('/faillogin', (req, res) => {
   res.render('login-error');
@@ -218,10 +237,6 @@ app.get('/logout/', (req,res)=>{
 //   res.redirect('/');
 // })
 
-app.post('/api/logout/', async (req,res)=>{
-  req.session.destroy();
-  res.redirect('/login/');
-})
 
 io.on('connection', async socket =>{
 
