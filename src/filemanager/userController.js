@@ -1,8 +1,9 @@
 import MongoController from "./mongoController.js";
+import 'dotenv/config';
 
 export default class UserController{
     constructor (){
-        this.db = new MongoController('mongodb://jdecima:coderhouse@coderhouse-shard-00-00.gj3mp.mongodb.net:27017,coderhouse-shard-00-01.gj3mp.mongodb.net:27017,coderhouse-shard-00-02.gj3mp.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-80zdtm-shard-0&authSource=admin&retryWrites=true&w=majority',"myFirstDatabase","users")
+        this.db = new MongoController(process.env.MONGODB_URL,"myFirstDatabase","users")
     }
 
     async addUser(user){

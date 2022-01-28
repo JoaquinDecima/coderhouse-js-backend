@@ -1,10 +1,11 @@
+import 'dotenv/config';
 import express from 'express';
 import exphbs from 'express-handlebars';
 import session from 'express-session';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import UserController from './filemanager/userController.js';
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 // import routerProductos from './routers/routerProductos.js';
@@ -13,8 +14,9 @@ import ContenedorSQL from './filemanager/contenedorSQL.js';
 import ChatManager from './filemanager/chat.js'
 import MongoStore from 'connect-mongo';
 // import startEntorno from '../entorno/expressEntorno.js';
-import faker from 'faker'
-faker.locale = 'es'
+import faker from 'faker';
+faker.locale = 'es';
+
 
 const salt = bcrypt.genSaltSync(10);
 const users = new UserController();
@@ -56,11 +58,11 @@ const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 const cont = new ContenedorSQL({
   client: 'mysql',
   connection:{
-    host: '127.0.0.1',
+    host: process.env.MYSQL_HOST,
     port: '3306',
-    user: 'jdecima',
-    password: 'jdecima',
-    database: 'coderhouse'
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASS,
+    database: process.env.MYSQL_DATABASE
   }
 }, "productos");
 
@@ -86,7 +88,7 @@ app.use(express.static('public'));
 
 app.use(session({
   store: MongoStore.create({
-      mongoUrl: 'mongodb://jdecima:coderhouse@coderhouse-shard-00-00.gj3mp.mongodb.net:27017,coderhouse-shard-00-01.gj3mp.mongodb.net:27017,coderhouse-shard-00-02.gj3mp.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-80zdtm-shard-0&authSource=admin&retryWrites=true&w=majority',
+      mongoUrl: process.env.MONGODB_URL,
       mongoOptions: advancedOptions
   }),
 
