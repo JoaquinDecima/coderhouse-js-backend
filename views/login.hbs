@@ -38,8 +38,7 @@
             <div class="input-group mb-3"></div>
               <button
                 class="btn btn-outline-secondary btn-primary"
-                type="submit"
-                id="button-addon2">
+                type="submit">
                 Enviar
               </button>
               <p class="text-center">Si no tienes una cuenta puedes registrarte <a href="/register/">aqui</a></p>
@@ -69,39 +68,3 @@
     padding: 40px;
   }
 </style>
-
-<script>
-  function login(){
-
-    const usuario = document.getElementById('mail').value;
-    const password = MD5(document.getElementById('password').value);
-    
-    if (usuario && password) {
-      fetch('/api/login/', {
-        method: 'POST',
-        redirect: 'follow',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({usuario,password})
-      })
-      .then(response => {
-        if (response.redirected) {
-          console.log(response);
-          //sessionStorage.setItem("usuario", usuario);
-          //sessionStorage.setItem("name", name);
-          //sessionStorage.setItem("lastname", lastname);
-          //sessionStorage.setItem("edad", edad);
-          //sessionStorage.setItem("avatar", avatar);
-          //sessionStorage.setItem("alias", alias);
-          window.location.href = response.url;
-        }
-      })
-    }else{
-      document.getElementById('error-section').innerHTML = `
-      <div class="alert alert-danger" role="alert">
-        Ingrese los datos correctamente
-      </div>`;
-    }
-  }
-</script>
