@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            Cargando... 
+        </div>
+    </div>
+</div>
+<script nonce="2726c7f26c">
+    function check(){
+        let request = new XMLHttpRequest();
+
+        request.open('GET', '/api/data/');
+        request.responseType = 'json';
+        
+        request.onload = function() {
+            sessionStorage.setItem("usuario", request.response.username);
+            window.location.href = '/';
+        };
+
+        request.send();
+    }
+    
+    check();
+</script>

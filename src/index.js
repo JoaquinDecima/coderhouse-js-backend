@@ -34,11 +34,8 @@ passport.use('register', new LocalStrategy(async (username, password, done) =>{
 
 passport.use('login', new LocalStrategy(async (username, password, done)=>{
     let usuario = await users.getUser(username);
-    console.log(usuario);
     let hashpass = bcrypt.hashSync(password, salt);
-    console.log(usuario[0].password == hashpass);
-    console.log(hashpass);
-    if(usuario[0].password == hashpass){
+    if(usuario != [] && usuario[0].password == hashpass){
       return done(null, usuario);
     }else{
       return done(null, false);
@@ -83,6 +80,10 @@ const httpServer = new HTTPServer(app);
 const io = new IOServer(httpServer);
 const PORT = process.env.PORT || 8080;
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static('public'));
+
 app.use(session({
   store: MongoStore.create({
       mongoUrl: 'mongodb://jdecima:coderhouse@coderhouse-shard-00-00.gj3mp.mongodb.net:27017,coderhouse-shard-00-01.gj3mp.mongodb.net:27017,coderhouse-shard-00-02.gj3mp.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-80zdtm-shard-0&authSource=admin&retryWrites=true&w=majority',
@@ -105,15 +106,19 @@ app.engine('hbs', exphbs({
 }))
 app.set('view engine', 'hbs')
 // app.use(express.static('./public'));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 function isAuth(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (req.session.username && chekDate(req.session.date)){
+    req.session.date = new Date();
     next()
   } else {
     res.redirect('/logout/')
   }
+}
+
+function log(req, res, next){
+  console.log(req);
+  next()
 }
 
 // Se configura API
@@ -186,10 +191,19 @@ app.post('/api/register/', passport.authenticate('register', {
 
 app.post('/api/login/', passport.authenticate('login', { 
   failureRedirect: '/faillogin',
-  successRedirect: '/' 
+  successRedirect: '/iniciando' 
 }))
 
-app.post('/api/logout/', async (req,res)=>{
+app.get('/api/data/', (req,res)=>{
+  let user = req.user[0];
+  req.session.username = user.username;
+  req.session.date = new Date();
+  console.log(user);
+  res.setHeader('Content-Type', 'application/json');
+  res.json(user);
+})
+
+app.post('/api/logout/', (req,res)=>{
   req.session.destroy();
   res.redirect('/login/');
 })
@@ -210,6 +224,10 @@ app.get('/login/', (req,res)=>{
   }
 })
 
+app.get('/iniciando/', (req,res)=>{
+  res.render('get-data');
+})
+
 app.get('/register/', (req,res)=>{
   if (req.session.usuario){
     res.redirect('/')    
@@ -219,12 +237,7 @@ app.get('/register/', (req,res)=>{
 })
 
 app.get('/logout/', (req,res)=>{
-  if (req.session.usuario && chekDate(req.session.date)){
-    res.render('logout');    
-  }else{
-    res.redirect('/login/');
-  }
-  
+  res.render('logout');    
 })
 
 // app.post('/api/login/', async (req,res)=>{
@@ -275,8 +288,14 @@ io.on('connection', async socket =>{
 })
 
 function chekDate(date){
-  let resta = (new Date()).getTime() - date.getTime();
-  return(Math.round(resta/ (1000*60) < 10))
+  if (date){
+    let oldDate = new Date(date)
+    let resta = (new Date()).getTime() - oldDate.getTime();
+    return(Math.round(resta/ (1000*60) < 10))
+  }else{
+    return false;
+  }
+  
 }
 
 // Se inicia API
