@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import minimist from 'minimist';
 import express from 'express';
 import exphbs from 'express-handlebars';
 import session from 'express-session';
@@ -16,7 +17,6 @@ import MongoStore from 'connect-mongo';
 // import startEntorno from '../entorno/expressEntorno.js';
 import faker from 'faker';
 faker.locale = 'es';
-
 
 const salt = bcrypt.genSaltSync(10);
 const users = new UserController();
@@ -80,7 +80,7 @@ const chat = new ChatManager("./chat.data");
 const app = express();
 const httpServer = new HTTPServer(app);
 const io = new IOServer(httpServer);
-const PORT = process.env.PORT || 8080;
+const PORT = minimist(process.argv.slice(2)).port || process.env.PORT || 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
