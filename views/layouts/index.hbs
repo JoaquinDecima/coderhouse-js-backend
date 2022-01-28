@@ -19,6 +19,7 @@
       crossorigin="anonymous" />
 
     <title>Productos Service</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="margin-bottom:80px;">
@@ -88,7 +89,7 @@
                 <img
                   src="${sessionStorage.getItem("img") || 'http://www.gravatar.com/avatar/'.concat(MD5(sessionStorage.getItem("usuario").toLowerCase()))}"
                   class="img-fluid rounded"
-                  style="max-height: 18px;" /> ${sessionStorage.getItem("alias")}
+                  style="max-height: 18px;" /> ${sessionStorage.getItem("usuario")}
               </a>
               <ul class="dropdown-menu" id="user-drop" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item disabled" href="#">Perfil</a></li>
