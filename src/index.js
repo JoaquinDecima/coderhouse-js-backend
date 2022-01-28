@@ -242,6 +242,17 @@ app.get('/logout/', (req,res)=>{
   res.render('logout');    
 })
 
+app.get('/info/', (req,res)=>{
+  res.render('info',{
+    args: JSON.stringify(minimist(process.argv.slice(2))),
+    platform: process.platform,
+    process_id: process.pid,
+    folder: process.env.PWD,
+    node_version: process.versions.node,
+    memory: process.memoryUsage().rss
+  });
+})
+
 // app.post('/api/login/', async (req,res)=>{
 //   req.session.usuario = req.body.usuario;
 //   req.session.name = req.body.name;
