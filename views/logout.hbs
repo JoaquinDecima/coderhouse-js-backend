@@ -41,11 +41,6 @@
     .then(response => {
       if (response.redirected) {
         sessionStorage.setItem("usuario", false);
-        sessionStorage.setItem("name", false);
-        sessionStorage.setItem("lastname", false);
-        sessionStorage.setItem("edad", false);
-        sessionStorage.setItem("avatar", false);
-        sessionStorage.setItem("alias", false);
         window.location.href = response.url;
       }
     })
@@ -53,7 +48,7 @@
 
   document.getElementById('saludo').innerHTML = `
       <h1 class="text-center">
-        Adios ${sessionStorage.getItem("alias")}
+        Adios ${sessionStorage.getItem("usuario")}
       </h1>`;
   logout();
 </script>
