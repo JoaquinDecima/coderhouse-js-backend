@@ -77,10 +77,11 @@ const chat = new ChatManager("./chat.data");
 // startEntorno(cont);
 
 // SetUp del entorno
+const nodeParams = minimist(process.argv.slice(2));
 const app = express();
 const httpServer = new HTTPServer(app);
 const io = new IOServer(httpServer);
-const PORT = minimist(process.argv.slice(2)).port || process.env.PORT || 8080;
+const PORT = nodeParams.port || process.env.PORT || 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -244,7 +245,7 @@ app.get('/logout/', (req,res)=>{
 
 app.get('/info/', (req,res)=>{
   res.render('info',{
-    args: JSON.stringify(minimist(process.argv.slice(2))),
+    args: JSON.stringify(nodeParams),
     platform: process.platform,
     process_id: process.pid,
     folder: process.env.PWD,
