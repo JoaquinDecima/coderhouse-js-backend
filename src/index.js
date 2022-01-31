@@ -9,6 +9,7 @@ import UserController from './filemanager/userController.js';
 import bcrypt from 'bcryptjs';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
+import os from 'os';
 // import routerProductos from './routers/routerProductos.js';
 // import Contenedor from './filemanager/contenedor.js';
 import ContenedorSQL from './filemanager/contenedorSQL.js';
@@ -250,7 +251,8 @@ app.get('/info/', (req,res)=>{
     process_id: process.pid,
     folder: process.env.PWD,
     node_version: process.versions.node,
-    memory: process.memoryUsage().rss
+    memory: process.memoryUsage().rss,
+    cores: os.cpus().length
   });
 })
 
