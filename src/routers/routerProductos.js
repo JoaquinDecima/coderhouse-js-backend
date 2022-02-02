@@ -1,7 +1,7 @@
-import { isAuth } from '../model/middelware/auth';
+import { isAuth } from '../model/middelware/auth.js';
 import express from 'express';
 import faker from 'faker';
-import { dbContainer } from '../model/dao/databases';
+import { dbContainer } from '../model/dao/databases.js';
 faker.locale = 'es';
 
 export const routerProductos = express.Router();

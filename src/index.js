@@ -3,53 +3,17 @@ import minimist from 'minimist';
 import express from 'express';
 import exphbs from 'express-handlebars';
 import session from 'express-session';
-import passport from 'passport';
-import LocalStrategy from 'passport-local';
-import UserdbContainerroller from './model/dao/userdbContainerroller.js';
 import { dbContainer, dbChat } from './model/dao/databases.js';
 import { routerProductos } from './routers/routerProductos.js';
-import bcrypt from 'bcryptjs';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 import os from 'os';
+import passport from 'passport';
 // import routerProductos from './routers/routerProductos.js';
 // import dbContainerenedor from './filemanager/dbContainerenedor.js';
 import MongoStore from 'connect-mongo';
 // import startEntorno from '../entorno/expressEntorno.js';
 import { isAuth } from './model/middelware/auth.js';
-
-const salt = bcrypt.genSaltSync(10);
-const users = new UserdbContainerroller();
-const usuarios = [];
-
-passport.use('register', new LocalStrategy(async (username, password, done) =>{
-	let hashpass = bcrypt.hashSync(password, salt);
-	let usuario = {username, password: hashpass};
-	if (await users.addUser(usuario)){
-		usuarios.push(usuario);
-		return done(null, usuario);
-	}else{
-		return done(false);
-	}
-}));
-
-passport.use('login', new LocalStrategy(async (username, password, done)=>{
-	let usuario = await users.getUser(username);
-	let hashpass = bcrypt.hashSync(password, salt);
-	if(usuario != [] && usuario[0].password == hashpass){
-		return done(null, usuario);
-	}else{
-		return done(null, false);
-	}
-}));
-
-passport.serializeUser(function (usuario, done) {
-	done(null, usuario);
-});
-
-passport.deserializeUser(function (usuario, done) {
-	done(null, usuario);
-});
 
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
@@ -93,31 +57,6 @@ app.use('/productos',routerProductos);
 app.get('/', isAuth, async (req,res)=>{
 	const productos = JSON.parse(await dbContainer.getAll());
 	res.render('index', {productos});
-});
-
-app.post('/api/register/', passport.authenticate('register', { 
-	failureRedirect: '/failregister',
-	failureMessage: true,
-	successRedirect: '/' 
-}));
-
-app.post('/api/login/', passport.authenticate('login', { 
-	failureRedirect: '/faillogin',
-	successRedirect: '/iniciando' 
-}));
-
-app.get('/api/data/', (req,res)=>{
-	let user = req.user[0];
-	req.session.username = user.username;
-	req.session.date = new Date();
-	console.log(user);
-	res.setHeader('dbContainerent-Type', 'application/json');
-	res.json(user);
-});
-
-app.post('/api/logout/', (req,res)=>{
-	req.session.destroy();
-	res.redirect('/login/');
 });
 
 app.get('/failregister/', (req, res) => {
