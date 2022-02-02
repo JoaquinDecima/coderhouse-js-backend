@@ -43,8 +43,8 @@ export default class MongoController{
 			returner = await this.client.db(this.db).collection(this.collection).find().toArray();
 		} finally {
 			await this.client.close();
-			return returner;
 		}
+		return returner;
 	}
 
 	async readDataByID(id){
@@ -54,7 +54,7 @@ export default class MongoController{
 			returner = await this.client.db(this.db).collection(this.collection).find({_id:id}).toArray();
 		} finally {
 			await this.client.close();
-			return returner;
 		}
+		return returner;
 	}
 }
