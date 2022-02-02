@@ -5,22 +5,21 @@ import exphbs from 'express-handlebars';
 import session from 'express-session';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import UserController from './filemanager/userController.js';
+import UserdbContainerroller from './model/dao/userdbContainerroller.js';
+import { dbContainer, dbChat } from './model/dao/databases.js';
+import { routerProductos } from './routers/routerProductos.js';
 import bcrypt from 'bcryptjs';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 import os from 'os';
 // import routerProductos from './routers/routerProductos.js';
-// import Contenedor from './filemanager/contenedor.js';
-import ContenedorSQL from './filemanager/contenedorSQL.js';
-import ChatManager from './filemanager/chat.js';
+// import dbContainerenedor from './filemanager/dbContainerenedor.js';
 import MongoStore from 'connect-mongo';
 // import startEntorno from '../entorno/expressEntorno.js';
-import faker from 'faker';
-faker.locale = 'es';
+import { isAuth } from './model/middelware/auth.js';
 
 const salt = bcrypt.genSaltSync(10);
-const users = new UserController();
+const users = new UserdbContainerroller();
 const usuarios = [];
 
 passport.use('register', new LocalStrategy(async (username, password, done) =>{
@@ -53,26 +52,6 @@ passport.deserializeUser(function (usuario, done) {
 });
 
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
-const cont = new ContenedorSQL({
-	client: 'mysql',
-	connection:{
-		host: process.env.MYSQL_HOST,
-		port: '3306',
-		user: process.env.MYSQL_USER,
-		password: process.env.MYSQL_PASS,
-		database: process.env.MYSQL_DATABASE
-	}
-}, 'productos');
-
-const chat = new ChatManager('./chat.data');
-
-// const chat = new ContenedorSQL({
-//   client: 'sqlite3',
-//   connection: {
-//     filename: "./chat.sqlite"
-//   }
-// },'chat');
-// startEntorno(cont);
 
 // SetUp del entorno
 const nodeParams = minimist(process.argv.slice(2));
@@ -106,77 +85,14 @@ app.engine('hbs', exphbs({
 	defaultLayout: 'index.hbs'
 }));
 app.set('view engine', 'hbs');
-// app.use(express.static('./public'));
-
-function isAuth(req, res, next) {
-	if (req.session.username && chekDate(req.session.date)){
-		req.session.date = new Date();
-		next();
-	} else {
-		res.redirect('/logout/');
-	}
-}
 
 // Se configura API
 
-// app.use('/api/productos',routerProductos);
+app.use('/productos',routerProductos);
 
 app.get('/', isAuth, async (req,res)=>{
-	const productos = JSON.parse(await cont.getAll());
+	const productos = JSON.parse(await dbContainer.getAll());
 	res.render('index', {productos});
-});
-
-app.get('/productos/', isAuth, (req,res)=>{
-	res.render('products');
-});
-
-app.get('/productos-test/', (req,res)=>{
-	const productos = [{
-		title: faker.commerce.productName,
-		price: faker.datatype.number({
-			'min': 23,
-			'max': 780
-		}),
-		thumbnail: faker.image.imageUrl
-	},{
-		title: faker.commerce.productName,
-		price: faker.datatype.number({
-			'min': 23,
-			'max': 780
-		}),
-		thumbnail: faker.image.imageUrl
-	},{
-		title: faker.commerce.productName,
-		price: faker.datatype.number({
-			'min': 23,
-			'max': 780
-		}),
-		thumbnail: faker.image.imageUrl
-	},{
-		title: faker.commerce.productName,
-		price: faker.datatype.number({
-			'min': 23,
-			'max': 780
-		}),
-		thumbnail: faker.image.imageUrl
-	},{
-		title: faker.commerce.productName,
-		price: faker.datatype.number({
-			'min': 23,
-			'max': 780
-		}),
-		thumbnail: faker.image.imageUrl
-	}];
-	res.render('list-test', {productos});
-});
-
-app.post('/productos/', async (req,res)=>{
-	await cont.save({
-		title : req.body.nombre,
-		price : req.body.precio,
-		thumbnail: req.body.imagen
-	});
-	res.redirect('/');
 });
 
 app.post('/api/register/', passport.authenticate('register', { 
@@ -195,7 +111,7 @@ app.get('/api/data/', (req,res)=>{
 	req.session.username = user.username;
 	req.session.date = new Date();
 	console.log(user);
-	res.setHeader('Content-Type', 'application/json');
+	res.setHeader('dbContainerent-Type', 'application/json');
 	res.json(user);
 });
 
@@ -262,24 +178,24 @@ app.get('/info/', (req,res)=>{
 io.on('connection', async socket =>{
 
 	// Se conecta y recive todos los productos
-	socket.emit('update-products', JSON.parse(await cont.getAll()));
+	socket.emit('update-products', JSON.parse(await dbContainer.getAll()));
 
 	// Se conecta y recive todo el historial de mensajes
-	socket.emit('update-menssajes', chat.getAll());
+	socket.emit('update-menssajes', dbChat.getAll());
 
 	// Agrego producto y envio propago Productos
 	socket.on('add-product', async data => {
-		await cont.save({
+		await dbContainer.save({
 			title : data.nombre,
 			price : data.precio,
 			thumbnail: data.imagen
 		});
-		socket.emit('update-products', await cont.getAll());
+		socket.emit('update-products', await dbContainer.getAll());
 	});
 
 	// Agrego mensaje y envio propago Mensajes
 	socket.on('add-menssaje', data => {
-		chat.save({
+		dbChat.save({
 			author : {
 				email: data.usuario,
 				nombre: data.name,
@@ -291,20 +207,10 @@ io.on('connection', async socket =>{
 			menssaje : data.mensaje,
 			date : new Date()
 		});
-		socket.emit('update-menssajes', chat.getAll());
+		socket.emit('update-menssajes', dbChat.getAll());
 	});
 });
 
-function chekDate(date){
-	if (date){
-		let oldDate = new Date(date);
-		let resta = (new Date()).getTime() - oldDate.getTime();
-		return(Math.round(resta/ (1000*60) < 10));
-	}else{
-		return false;
-	}
-  
-}
 
 // Se inicia API
 

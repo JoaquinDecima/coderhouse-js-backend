@@ -1,44 +1,60 @@
+import { isAuth } from '../model/middelware/auth';
 import express from 'express';
-import Contenedor from '../filemanager/contenedor.js';
-import startEntorno from '../../entorno/expressEntorno.js';
+import faker from 'faker';
+import { dbContainer } from '../model/dao/databases';
+faker.locale = 'es';
 
-const routerProductos = express.Router();
-const cont = new Contenedor('../../productos.txt');
-startEntorno(cont);
+export const routerProductos = express.Router();
 
-routerProductos.get('/', function(req, res){
-	res.send(cont.getAll());
+routerProductos.get('/', isAuth, (req,res)=>{
+	res.render('products');
 });
 
-routerProductos.get('/:id', function(req, res){
-	res.send(cont.getByID(req.params.id));
+routerProductos.get('/test', (req,res)=>{
+	const productos = [{
+		title: faker.commerce.productName,
+		price: faker.datatype.number({
+			'min': 23,
+			'max': 780
+		}),
+		thumbnail: faker.image.imageUrl
+	},{
+		title: faker.commerce.productName,
+		price: faker.datatype.number({
+			'min': 23,
+			'max': 780
+		}),
+		thumbnail: faker.image.imageUrl
+	},{
+		title: faker.commerce.productName,
+		price: faker.datatype.number({
+			'min': 23,
+			'max': 780
+		}),
+		thumbnail: faker.image.imageUrl
+	},{
+		title: faker.commerce.productName,
+		price: faker.datatype.number({
+			'min': 23,
+			'max': 780
+		}),
+		thumbnail: faker.image.imageUrl
+	},{
+		title: faker.commerce.productName,
+		price: faker.datatype.number({
+			'min': 23,
+			'max': 780
+		}),
+		thumbnail: faker.image.imageUrl
+	}];
+	res.render('list-test', {productos});
 });
 
-routerProductos.post('/', function(req, res){
-	console.log(req.body);
-	const id = cont.save({
+routerProductos.post('/', async (req,res)=>{
+	await dbContainer.save({
 		title : req.body.nombre,
 		price : req.body.precio,
 		thumbnail: req.body.imagen
 	});
-	res.send({id: id});
+	res.redirect('/');
 });
-
-routerProductos.delete('/:id', function(req, res){
-	res.send(cont.deleteById(req.params.id));
-});
-
-routerProductos.put('/', function(req, res){
-	if(cont.editByID(req.body.id, req.body.nombre, req.body.precio, req.body.imagen)){
-		res.send('');
-	}else{
-		res.send({error:'Producto no encontrado'});
-	}
-});
-
-routerProductos.get('/random', function(req, res){
-	const random = Math.floor(Math.random() * cont.getAll().length);
-	res.send(cont.getByID(random));
-});
-
-export default routerProductos;
