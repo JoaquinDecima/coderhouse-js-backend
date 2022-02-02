@@ -3,16 +3,14 @@ import minimist from 'minimist';
 import express from 'express';
 import exphbs from 'express-handlebars';
 import session from 'express-session';
+import cluster from 'cluster';
+import os from 'os';
+import passport from 'passport';
+import MongoStore from 'connect-mongo';
 import { dbContainer, dbChat } from './model/dao/databases.js';
 import { routerProductos } from './routers/routerProductos.js';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
-import os from 'os';
-import passport from 'passport';
-// import routerProductos from './routers/routerProductos.js';
-// import dbContainerenedor from './filemanager/dbContainerenedor.js';
-import MongoStore from 'connect-mongo';
-// import startEntorno from '../entorno/expressEntorno.js';
 import { isAuth } from './model/middelware/auth.js';
 
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
@@ -27,7 +25,6 @@ const PORT = nodeParams.port || process.env.PORT || 8080;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
-
 app.use(session({
 	store: MongoStore.create({
 		mongoUrl: process.env.MONGODB_URL,
@@ -103,16 +100,7 @@ app.get('/info/', (req,res)=>{
 	});
 });
 
-// app.post('/api/login/', async (req,res)=>{
-//   req.session.usuario = req.body.usuario;
-//   req.session.name = req.body.name;
-//   req.session.lastname = req.body.lastname;
-//   req.session.edad = req.body.edad;
-//   req.session.avatar = req.body.avatar;
-//   req.session.alias = req.body.alias;
-//   res.redirect('/');
-// })
-
+// Socket
 
 io.on('connection', async socket =>{
 
@@ -152,9 +140,23 @@ io.on('connection', async socket =>{
 
 
 // Se inicia API
+if (nodeParams.modo == 'cluster' && cluster.isPrimary){
+	console.log(`PID MASTER ${process.pid}`);
 
-const conectedServer = httpServer.listen(PORT, () => {
-	console.log(`Inicio pode verlo en http://localhost:${PORT}`);
-});
+	for (let i = 0; i < os.cpus().length; i++) {
+		cluster.fork();
+	}
 
-conectedServer.on('error', error => console.log(`error en servidor ${error}`));
+	cluster.on('exit', (worker, code, signal) => {
+		console.log(`Worker ${worker.process.pid} died [${code}] - ${signal}`);
+		cluster.fork();
+	});
+} else {
+	const conectedServer = httpServer.listen((parseInt(process.argv[2]) || PORT), err => {
+		if (!err){
+			console.log(`Inicio pode verlo en http://localhost:${(parseInt(process.argv[2]) || PORT)} [${process.pid}]`);
+		}
+	});
+
+	conectedServer.on('error', error => console.log(`error en servidor ${error}`));
+}
