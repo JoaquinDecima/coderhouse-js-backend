@@ -7,10 +7,10 @@ import cluster from 'cluster';
 import os from 'os';
 import passport from 'passport';
 import MongoStore from 'connect-mongo';
-import { dbContainer, dbChat } from './model/dao/databases.js';
-import { routerProductos } from './routers/routerProductos.js';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
+import { dbContainer, dbChat } from './model/dao/databases.js';
+import { routerProductos } from './routers/routerProductos.js';
 import { isAuth } from './model/middelware/auth.js';
 
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
@@ -137,7 +137,6 @@ io.on('connection', async socket =>{
 		socket.emit('update-menssajes', dbChat.getAll());
 	});
 });
-
 
 // Se inicia API
 if (nodeParams.modo == 'cluster' && cluster.isPrimary){
