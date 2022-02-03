@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import compression from 'compression';
 import minimist from 'minimist';
 import express from 'express';
 import exphbs from 'express-handlebars';
@@ -11,6 +12,7 @@ import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
 import { dbContainer, dbChat } from './model/dao/databases.js';
 import { routerProductos } from './routers/routerProductos.js';
+import { routerAPI } from './routers/routerApi.js';
 import { isAuth } from './model/middelware/auth.js';
 
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
@@ -40,6 +42,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(compression());
 
 app.engine('hbs', exphbs({
 	extname: 'hbs',
@@ -49,7 +52,8 @@ app.set('view engine', 'hbs');
 
 // Se configura API
 
-app.use('/productos',routerProductos);
+app.use('/productos', routerProductos);
+app.use('/api', routerAPI);
 
 app.get('/', isAuth, async (req,res)=>{
 	const productos = JSON.parse(await dbContainer.getAll());
