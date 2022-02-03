@@ -1,13 +1,13 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import LocalStrategy from 'passport-local';
-import UserdbContainerroller from './model/dao/userdbContainerroller.js';
+import UserController from '../model/dao/userController.js';
 import passport from 'passport';
 
 export const routerAPI = express.Router();
 
 const salt = bcrypt.genSaltSync(10);
-const users = new UserdbContainerroller();
+const users = new UserController();
 const usuarios = [];
 
 // Passport Config
@@ -44,18 +44,18 @@ passport.deserializeUser(function (usuario, done) {
 
 // API Config
 
-routerAPI.post('/api/register/', passport.authenticate('register', { 
+routerAPI.post('/register/', passport.authenticate('register', { 
 	failureRedirect: '/failregister',
 	failureMessage: true,
 	successRedirect: '/' 
 }));
 
-routerAPI.post('/api/login/', passport.authenticate('login', { 
+routerAPI.post('/login/', passport.authenticate('login', { 
 	failureRedirect: '/faillogin',
 	successRedirect: '/iniciando' 
 }));
 
-routerAPI.get('/api/data/', (req,res)=>{
+routerAPI.get('/data/', (req,res)=>{
 	let user = req.user[0];
 	req.session.username = user.username;
 	req.session.date = new Date();
@@ -64,7 +64,7 @@ routerAPI.get('/api/data/', (req,res)=>{
 	res.json(user);
 });
 
-routerAPI.post('/api/logout/', (req,res)=>{
+routerAPI.post('/logout/', (req,res)=>{
 	req.session.destroy();
 	res.redirect('/login/');
 });
