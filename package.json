@@ -16,6 +16,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cluster": "^0.7.7",
+    "compression": "^1.7.4",
     "connect-mongo": "^4.6.0",
     "dotenv": "^14.3.2",
     "express": "^4.17.1",
@@ -35,8 +36,8 @@
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {
+    "eslint": "^8.8.0",
     "forever": "^4.0.3",
-    "forever-monitor": "^3.0.3",
-    "eslint": "^8.8.0"
+    "forever-monitor": "^3.0.3"
   }
 }
