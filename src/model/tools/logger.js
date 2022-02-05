@@ -15,7 +15,7 @@ class Logger{
 	}
 
 	warn(mensaje){
-		this.logger.warning(mensaje);
+		this.logger.warn(mensaje);
 	}
 
 	error(mensaje){
