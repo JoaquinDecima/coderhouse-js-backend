@@ -113,6 +113,11 @@ app.get('/info/', (req,res)=>{
 	});
 });
 
+app.get('*', function(req, res){
+	logger.warn(`404 Ruta no encontrada '${req.url}'`);
+	res.status(404).send('404');
+});
+
 // Socket
 
 io.on('connection', async socket =>{

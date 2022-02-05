@@ -6,7 +6,7 @@ class Logger{
 			format: winston.format.simple(),
 			transports: [
 				new winston.transports.File({ filename: 'error.log', level: 'error' }),
-				new winston.transports.File({ filename: 'warn.log', level: 'warning' }),
+				new winston.transports.File({ filename: 'warn.log', level: 'warn' }),
 				new winston.transports.Console({
 					format: winston.format.combine(winston.format.colorize(), winston.format.simple())
 				})
