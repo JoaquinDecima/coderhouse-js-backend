@@ -23,7 +23,7 @@ const nodeParams = minimist(process.argv.slice(2));
 const app = express();
 const httpServer = new HTTPServer(app);
 const io = new IOServer(httpServer);
-const PORT = nodeParams.port || process.env.PORT || 8080;
+const PORT = process.env.PORT || nodeParams.port || 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
