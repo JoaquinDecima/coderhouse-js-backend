@@ -14,6 +14,7 @@ import { dbContainer, dbChat } from './model/dao/databases.js';
 import { routerProductos } from './routers/routerProductos.js';
 import { routerAPI } from './routers/routerApi.js';
 import { isAuth } from './model/middelware/auth.js';
+import { logger } from './model/tools/logger.js';
 
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
@@ -56,19 +57,23 @@ app.use('/productos', routerProductos);
 app.use('/api', routerAPI);
 
 app.get('/', isAuth, async (req,res)=>{
+	logger.info('Peticion GET a /');
 	const productos = JSON.parse(await dbContainer.getAll());
 	res.render('index', {productos});
 });
 
 app.get('/failregister/', (req, res) => {
+	logger.info('Peticion GET a /failregister/');
 	res.render('register-error');
 });
 
 app.get('/faillogin', (req, res) => {
+	logger.info('Peticion GET a /faillogin/');
 	res.render('login-error');
 });
 
 app.get('/login/', (req,res)=>{
+	logger.info('Peticion GET a /login/');
 	if (req.session.usuario){
 		res.redirect('/');    
 	}else{
@@ -77,10 +82,12 @@ app.get('/login/', (req,res)=>{
 });
 
 app.get('/iniciando/', (req,res)=>{
+	logger.info('Peticion GET a /iniciando/');
 	res.render('get-data');
 });
 
 app.get('/register/', (req,res)=>{
+	logger.info('Peticion GET a /registro/');
 	if (req.session.usuario){
 		res.redirect('/');    
 	}else{
@@ -89,10 +96,12 @@ app.get('/register/', (req,res)=>{
 });
 
 app.get('/logout/', (req,res)=>{
+	logger.info('Peticion GET a /logout/');
 	res.render('logout');    
 });
 
 app.get('/info/', (req,res)=>{
+	logger.info('Peticion GET a /info/');
 	res.render('info',{
 		args: JSON.stringify(nodeParams),
 		platform: process.platform,

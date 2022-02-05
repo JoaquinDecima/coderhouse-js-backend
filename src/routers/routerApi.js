@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import LocalStrategy from 'passport-local';
 import UserController from '../model/dao/userController.js';
 import passport from 'passport';
+import { logger } from '../model/tools/logger.js';
 
 export const routerAPI = express.Router();
 
@@ -13,6 +14,7 @@ const usuarios = [];
 // Passport Config
 
 passport.use('register', new LocalStrategy(async (username, password, done) =>{
+	logger.info('Peticion POST a /api/register/');
 	let hashpass = bcrypt.hashSync(password, salt);
 	let usuario = {username, password: hashpass};
 	if (await users.addUser(usuario)){
@@ -24,6 +26,7 @@ passport.use('register', new LocalStrategy(async (username, password, done) =>{
 }));
 
 passport.use('login', new LocalStrategy(async (username, password, done)=>{
+	logger.info('Peticion POST a /api/login/');
 	let usuario = await users.getUser(username);
 	let hashpass = bcrypt.hashSync(password, salt);
 	if(usuario != [] && usuario[0].password == hashpass){
@@ -56,6 +59,7 @@ routerAPI.post('/login/', passport.authenticate('login', {
 }));
 
 routerAPI.get('/data/', (req,res)=>{
+	logger.info('Peticion GET a /api/data/');
 	let user = req.user[0];
 	req.session.username = user.username;
 	req.session.date = new Date();
@@ -65,6 +69,7 @@ routerAPI.get('/data/', (req,res)=>{
 });
 
 routerAPI.post('/logout/', (req,res)=>{
+	logger.info('Peticion POST a /api/logout/');
 	req.session.destroy();
 	res.redirect('/login/');
 });
