@@ -53,12 +53,17 @@ routerProductos.get('/test', (req,res)=>{
 	res.render('list-test', {productos});
 });
 
-routerProductos.post('/', async (req,res)=>{
+routerProductos.post('/', (req,res)=>{
 	logger.info('Peticion POST a /productos/');
-	await dbContainer.save({
-		title : req.body.nombre,
-		price : req.body.precio,
-		thumbnail: req.body.imagen
-	});
+	try{
+		dbContainer.save({
+			title : req.body.nombre,
+			price : req.body.precio,
+			thumbnail: req.body.imagen
+		});
+	}
+	catch{
+		logger.error('Error al guardar Producto');
+	}
 	res.redirect('/');
 });

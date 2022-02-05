@@ -130,28 +130,39 @@ io.on('connection', async socket =>{
 
 	// Agrego producto y envio propago Productos
 	socket.on('add-product', async data => {
-		await dbContainer.save({
-			title : data.nombre,
-			price : data.precio,
-			thumbnail: data.imagen
-		});
+		try { 
+			dbContainer.save({
+				title : data.nombre,
+				price : data.precio,
+				thumbnail: data.imagen
+			});
+		}
+		catch{
+			logger.error('Error al guardar producto');
+		}
 		socket.emit('update-products', await dbContainer.getAll());
 	});
 
 	// Agrego mensaje y envio propago Mensajes
 	socket.on('add-menssaje', data => {
-		dbChat.save({
-			author : {
-				email: data.usuario,
-				nombre: data.name,
-				apellido: data.lastname,
-				edad: data.edad,
-				alias: data.alias,
-				avatar: data.avatar
-			},
-			menssaje : data.mensaje,
-			date : new Date()
-		});
+		try{
+			dbChat.save({
+				author : {
+					email: data.usuario,
+					nombre: data.name,
+					apellido: data.lastname,
+					edad: data.edad,
+					alias: data.alias,
+					avatar: data.avatar
+				},
+				menssaje : data.mensaje,
+				date : new Date()
+			});
+		}
+		catch{
+			logger.error('Error al guardar el mensaje');
+		}
+		
 		socket.emit('update-menssajes', dbChat.getAll());
 	});
 });
@@ -175,5 +186,5 @@ if (nodeParams.modo == 'cluster' && cluster.isPrimary){
 		}
 	});
 
-	conectedServer.on('error', error => console.log(`error en servidor ${error}`));
+	conectedServer.on('error', error => logger.error(`error en servidor ${error}`));
 }
