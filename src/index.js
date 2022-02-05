@@ -180,9 +180,9 @@ if (nodeParams.modo == 'cluster' && cluster.isPrimary){
 		cluster.fork();
 	});
 } else {
-	const conectedServer = httpServer.listen((parseInt(process.argv[2]) || PORT), err => {
+	const conectedServer = httpServer.listen(PORT, err => {
 		if (!err){
-			console.log(`Inicio pode verlo en http://localhost:${(parseInt(process.argv[2]) || PORT)} [${process.pid}]`);
+			console.log(`Inicio pode verlo en http://localhost:${PORT} [${process.pid}]`);
 		}
 	});
 
