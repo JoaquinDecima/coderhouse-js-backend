@@ -23,7 +23,7 @@ const nodeParams = minimist(process.argv.slice(2));
 const app = express();
 const httpServer = new HTTPServer(app);
 const io = new IOServer(httpServer);
-const PORT = process.env.PORT || nodeParams.port || 8080;
+const PORT = nodeParams.port || process.env.PORT || 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -180,9 +180,9 @@ if (nodeParams.modo == 'cluster' && cluster.isPrimary){
 		cluster.fork();
 	});
 } else {
-	const conectedServer = httpServer.listen(PORT, err => {
+	const conectedServer = httpServer.listen((parseInt(process.argv[2]) || PORT), err => {
 		if (!err){
-			console.log(`Inicio pode verlo en http://localhost:${PORT} [${process.pid}]`);
+			console.log(`Inicio pode verlo en http://localhost:${(parseInt(process.argv[2]) || PORT)} [${process.pid}]`);
 		}
 	});
 
