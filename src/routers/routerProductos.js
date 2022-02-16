@@ -1,7 +1,7 @@
 import { isAuth } from '../model/middelware/auth.js';
 import express from 'express';
 import faker from 'faker';
-import { dbContainer } from '../model/dao/databases.js';
+import { dbContainer } from '../model/tools/databases.js';
 import { logger } from '../model/tools/logger.js';
 faker.locale = 'es';
 

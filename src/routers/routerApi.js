@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import LocalStrategy from 'passport-local';
-import UserController from '../model/dao/userController.js';
+import UserController from '../model/user/userController.js';
 import passport from 'passport';
 import { logger } from '../model/tools/logger.js';
 

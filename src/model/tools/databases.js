@@ -1,6 +1,6 @@
 
-import ContenedorSQL from './contenedorSQL.js';
-import ChatManager from './chat.js';
+import ContenedorSQL from '../../dao/contenedorSQL.js';
+import ChatManager from '../chat/chat.js';
 
 export const dbContainer = new ContenedorSQL({
 	client: 'mysql',

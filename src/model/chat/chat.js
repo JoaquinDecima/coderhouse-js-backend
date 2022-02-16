@@ -1,5 +1,5 @@
 import { normalize, schema, denormalize } from 'normalizr';
-import FileManager from './filemanager.js';
+import FileManager from '../../dao/filemanager.js';
 
 export default class ChatManager{
 	constructor(path){

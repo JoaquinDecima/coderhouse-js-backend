@@ -1,4 +1,4 @@
-import FileManager from './filemanager.js';
+import FileManager from '../../dao/filemanager.js';
 
 export default class Contenedor{
 	lastObjectID = 0;

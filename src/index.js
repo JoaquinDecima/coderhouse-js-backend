@@ -10,7 +10,7 @@ import passport from 'passport';
 import MongoStore from 'connect-mongo';
 import { Server as HTTPServer } from 'http';
 import { Server as IOServer } from 'socket.io';
-import { dbContainer, dbChat } from './model/dao/databases.js';
+import { dbContainer, dbChat } from './model/tools/databases.js';
 import { routerProductos } from './routers/routerProductos.js';
 import { routerAPI } from './routers/routerApi.js';
 import { isAuth } from './model/middelware/auth.js';

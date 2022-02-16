@@ -1,4 +1,4 @@
-import MongoController from './mongoController.js';
+import MongoController from '../../dao/mongoController.js';
 import 'dotenv/config';
 
 export default class UserController{
